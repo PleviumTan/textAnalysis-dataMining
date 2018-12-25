@@ -4,7 +4,7 @@ import random
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 
-groupD = {"group A": 1, "group B": 2, "group C": 3, "group D": 4, "group E": 5}
+group = {"group A": 1, "group B": 2, "group C": 3, "group D": 4, "group E": 5}
 educationL = {"some high school": 1, "high school": 2, "some college": 3, "associate\'s degree": 4,
               "bachelor\'s degree": 5, "master\'s degree": 6}
 sex = {"famale": 0, "male": 1}
@@ -20,7 +20,7 @@ with open('StudentsPerformance.csv', 'r', encoding='iso-8859-1') as csvfile:
         newrow = [0, 0, 0, 0, 0]
         newrow[0] = sex[row[0]]
 
-        newrow[1] = groupD[row[1]]
+        newrow[1] = group[row[1]]
 
         newrow[2] = educationL[row[2]]
 
