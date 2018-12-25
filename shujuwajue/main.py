@@ -9,13 +9,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 import pydotplus
 
 group = {"group A": 1, "group B": 2, "group C": 3, "group D": 4, "group E": 5}
-educationL = {"some high school": 1, "high school": 2, "some college": 3, "associate\'s degree": 4,
+educationL = {"some high school": 2, "high school": 1, "some college": 3, "associate\'s degree": 4,
               "bachelor\'s degree": 5, "master\'s degree": 6}
-sex = {"female": 0, "male": 1}
+sex = {"female": 1, "male": 0}
 lunch = {"standard": 1, "free/reduced": 0}
 pre={"none":0,"completed":1}
 def readData():
@@ -36,18 +37,23 @@ def readData():
             newrow[3] = lunch[row[3]]
 
             newrow[4]=pre[row[4]]
-            dataList.append([newrow, int(row[5])])
+
+            newrow[5:8] = row[5:8]
+            dataList.append([newrow, int(row[8])])
 
     count = {'A': 0, 'B': 0}
     for student in dataList:
-        if student[1] >= 240:
-            student[1] = 1
+        if student[1] >= 235:
+            student[1] = 3
             count['A'] += 1
+        elif student[1]>175:
+            student[1] = 2
         else:
             student[1] = 0
             count['B'] += 1
 
     random.shuffle(dataList)
+
     return dataList
 
 def decisionTree(dataList):
@@ -56,28 +62,30 @@ def decisionTree(dataList):
     test_x = [a[0] for a in dataList[800:]]
     test_y = [a[1] for a in dataList[800:]]
 
-    clf = tree.DecisionTreeClassifier(random_state = 9,max_depth=4)
+    clf = tree.DecisionTreeClassifier(random_state=9,max_depth=3)
     clf = clf.fit(train_x, train_y)
 
     print(clf.score(test_x, test_y))
 
-    dot_data = tree.export_graphviz(clf, out_file=None,filled=True, rounded=True, special_characters=True,class_names=['B','A'])
+    dot_data = tree.export_graphviz(clf, out_file=None,filled=True, rounded=True, special_characters=True,class_names=['C','B','A'])
     graph = pydotplus.graph_from_dot_data(dot_data)
     graph.write_pdf("tree.pdf")
 
 def studentClustering(dataList):
     #需要降维数据
     studentList = [a[0] for a in dataList]
-    km = KMeans(init='k-means++', n_clusters=4)
+    km = KMeans(init='k-means++', n_clusters=3)
     result = km.fit(studentList)
     label_pred = result.labels_#获取聚类标签
     centroids = result.cluster_centers_#获取聚类中心
     interia = result.inertia_#获取聚类准则的总和
-    mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
+    print(result.cluster_centers_)
+    mark = ['or', 'ob', 'og', 'ok','oy','^r','^y','^b','^g','^k','+r', 'sr', 'dr', '<r', 'pr']
     #这里'or'代表中的'o'代表画圈，'r'代表颜色为红色，后面的依次类推
     color = 0
-    j = 0
-    student = np.array(studentList)
+    pca=PCA(n_components=2)
+    student = pca.fit_transform(studentList)
+    j=0
     for i in label_pred:
         plt.plot([student[j:j+1,0]], [student[j:j+1,1]], mark[i], markersize = 5)
         j +=1
@@ -85,8 +93,7 @@ def studentClustering(dataList):
     return result
 
 
-
 if __name__ == '__main__':
     dataList = readData()
     cluster = studentClustering(dataList)
-    print(cluster.labels_)
+    #decisionTree(dataList)
