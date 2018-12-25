@@ -4,76 +4,42 @@ import random
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 
-with open('StudentsPerformance.csv','r',encoding='iso-8859-1') as csvfile:
+groupD = {"group A": 1, "group B": 2, "group C": 3, "group D": 4, "group E": 5}
+educationL = {"some high school": 1, "high school": 2, "some college": 3, "associate\'s degree": 4,
+              "bachelor\'s degree": 5, "master\'s degree": 6}
+sex = {"famale": 0, "male": 1}
+lunch = {"standard": 1, "free/reduced": 0}
+pre={"none":0,"complate":1}
+with open('StudentsPerformance.csv', 'r', encoding='iso-8859-1') as csvfile:
     reader = csv.reader(csvfile)
     count = 0
     for row in reader:
-        if(not count):
+        if (not count):
             count += 1
             continue
-        newrow = [0,0,0,0,0]
-        if row[0] == 'female':
-            newrow[0] = 0
-        elif row[0] == 'male':
-            newrow[0] = 1
-        else:
-            print('Gender value error')
+        newrow = [0, 0, 0, 0, 0]
+        newrow[0] = sex[row[0]]
 
-        if row[1] == 'group A':
-            newrow[1] = 1
-        elif row[1] == 'group B':
-            newrow[1] = 2
-        elif row[1] == 'group C':
-            newrow[1] = 3
-        elif row[1] == 'group D':
-            newrow[1] = 4
-        elif row[1]== 'group E':
-            newrow[1] = 5
-        else:
-            print('Ethnic value error')
+        newrow[1] = groupD[row[1]]
 
-        if row[2] =='some high school':
-            newrow[2] = 1
-        elif row[2] == 'high school':
-            newrow[2] = 2
-        elif row[2] == 'some college':
-            newrow[2] = 3
-        elif row[2] =='associate\'s degree':
-            newrow[2] = 4
-        elif row[2] == 'bachelor\'s degree':
-            newrow[2] = 5
-        elif row[2] == 'master\'s degree':
-            newrow[2] = 6
-        else:
-            print('Degree value error')
+        newrow[2] = educationL[row[2]]
 
-        if row[3] == 'standard':
-            newrow[3] = 1
-        elif row[3] == 'free/reduced':
-            newrow[3] =0
-        else:
-            print('Lunch value error')
+        newrow[3] = lunch[row[3]]
 
-        if row[4] == 'completed':
-            newrow[4] = 1
-        elif row[4] == 'none':
-            newrow[4] = 0
-        else:
-            print('Course value error')
-        dataList.append([newrow,int(row[5])])
+        newrow[4]=pre[row[4]]
+        dataList.append([newrow, int(row[5])])
 
-count = {'A':0,'B':0,'C':0}
+count = {'A': 0, 'B': 0, 'C': 0}
 for student in dataList:
-    if student[1]>=240:
+    if student[1] >= 240:
         student[1] = 2
-        count['A']+=1
-    elif student[1]>165:
+        count['A'] += 1
+    elif student[1] > 165:
         student[1] = 1
         count['B'] += 1
     else:
         student[1] = 0
         count['C'] += 1
-
 
 random.shuffle(dataList)
 
@@ -82,7 +48,7 @@ train_y = [a[1] for a in dataList[:800]]
 test_x = [a[0] for a in dataList[800:]]
 test_y = [a[1] for a in dataList[800:]]
 
-clf = tree.DecisionTreeClassifier(splitter = 'best',max_depth=3)
+clf = tree.DecisionTreeClassifier(splitter='best', max_depth=3)
 clf = clf.fit(train_x, train_y)
 
-print(clf.score(test_x,test_y))
+print(clf.score(test_x, test_y))
