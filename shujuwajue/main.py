@@ -2,6 +2,7 @@ dataList = []
 import csv
 import random
 from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
 
 with open('StudentsPerformance.csv','r',encoding='iso-8859-1') as csvfile:
     reader = csv.reader(csvfile)
@@ -86,6 +87,6 @@ train_y = [a[1] for a in dataList[:800]]
 test_x = [a[0] for a in dataList[800:]]
 test_y = [a[1] for a in dataList[800:]]
 
-clf = tree.DecisionTreeClassifier()
+clf = RandomForestClassifier(random_state = 14)
 clf = clf.fit(train_x, train_y)
-print(clf.score(test_x,test_y))
+clf.score(test_x,test_y)
