@@ -62,23 +62,16 @@ with open('StudentsPerformance.csv','r',encoding='iso-8859-1') as csvfile:
             print('Course value error')
         dataList.append([newrow,int(row[5])])
 
-count = {'A':0,'B':0,'C':0,'D':0,'E':0}
+count = {'A':0,'B':0}
+#A: 成绩优秀 B：成绩一般
 for student in dataList:
     if student[1]>=240:
-        student[1] = 5
-        count['A']+=1
-    elif student[1]>215:
-        student[1] = 4
-        count['B']+=1
-    elif student[1]>=195:
-        student[1] = 3
-        count['C']+=1
-    elif student[1]>165:
-        student[1] = 2
-        count['D']+=1
-    else:
         student[1] = 1
-        count['E'] += 1
+        count['A']+=1
+    else:
+        student[1] = 0
+        count['B'] += 1
+
 
 random.shuffle(dataList)
 
@@ -87,6 +80,7 @@ train_y = [a[1] for a in dataList[:800]]
 test_x = [a[0] for a in dataList[800:]]
 test_y = [a[1] for a in dataList[800:]]
 
-clf = RandomForestClassifier(random_state = 14)
+clf = tree.DecisionTreeClassifier(splitter = 'best',max_depth=3)
 clf = clf.fit(train_x, train_y)
-clf.score(test_x,test_y)
+
+print(clf.score(test_x,test_y))
