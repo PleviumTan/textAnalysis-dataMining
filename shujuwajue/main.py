@@ -62,15 +62,17 @@ with open('StudentsPerformance.csv','r',encoding='iso-8859-1') as csvfile:
             print('Course value error')
         dataList.append([newrow,int(row[5])])
 
-count = {'A':0,'B':0}
-#A: 成绩优秀 B：成绩一般
+count = {'A':0,'B':0,'C':0}
 for student in dataList:
     if student[1]>=240:
-        student[1] = 1
+        student[1] = 2
         count['A']+=1
+    elif student[1]>165:
+        student[1] = 1
+        count['B'] += 1
     else:
         student[1] = 0
-        count['B'] += 1
+        count['C'] += 1
 
 
 random.shuffle(dataList)
